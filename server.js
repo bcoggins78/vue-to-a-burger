@@ -9,11 +9,22 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/dist"));
 }
 
+var db = require("./models");
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(express.static(".client/public"));
+
+require("./controllers/burgersController.js")(app);
+
 // Sample API
-app.get('/api/test', function(req, res) {
+app.get('/api/test', function (req, res) {
   res.json({ greeting: 'Welcome to your Vue App' });
 });
 
-app.listen(PORT, function() {
-  console.log(`🌎 ==> API server now on port ${PORT}!`);
+db.sequelize.sync({ force: false }).then(function () {
+  app.listen(PORT, function () {
+    console.log(`🌎 ==> API server now on port ${PORT}!`);
+  });
 });
